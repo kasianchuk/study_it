@@ -4,7 +4,17 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-    @posts = Post.where(country: ["Ukraine", "USA"])
+    @posts = Post.all
+    p params
+  end
+
+  def search
+    #@posts = Post.where(name: params['title'])
+    @posts =  Post.where('name LIKE ?', "%#{params['title']}%")
+  #  if @posts.empty?
+      @posts = Post.all if @posts.empty?
+      render :index
+#    end
   end
 
   # GET /posts/1
@@ -69,6 +79,6 @@ class PostsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def post_params
-      params.require(:post).permit(:name, :body, :title, :country)
+      params.require(:post).permit(:name, :body, :title, :country, :user_id)
     end
 end

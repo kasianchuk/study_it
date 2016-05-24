@@ -1,4 +1,5 @@
 class Post < ActiveRecord::Base
+  belongs_to :user
   validate :country_cannot_be_russia
   scope :ukraine, -> { where(country: "Ukraine")  }
   scope :usa, -> { where(country: "USA")  }
