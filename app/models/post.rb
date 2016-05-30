@@ -1,6 +1,11 @@
 class Post < ActiveRecord::Base
+  mount_uploader :picture, PictureUploader
+
   belongs_to :user
+  has_many :comments
+
   validate :country_cannot_be_russia
+  validates :name, presence: true
   scope :ukraine, -> { where(country: "Ukraine")  }
   scope :usa, -> { where(country: "USA")  }
 

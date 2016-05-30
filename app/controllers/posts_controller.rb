@@ -20,6 +20,9 @@ class PostsController < ApplicationController
   # GET /posts/1
   # GET /posts/1.json
   def show
+    @post = Post.find(params[:id])
+    @comments = @post.comments.all
+    @comment = @post.comments.build
   end
 
   # GET /posts/new
@@ -79,6 +82,6 @@ class PostsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def post_params
-      params.require(:post).permit(:name, :body, :title, :country, :user_id)
+      params.require(:post).permit(:name, :body, :title, :country, :picture, :user_id)
     end
 end

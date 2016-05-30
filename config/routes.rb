@@ -1,5 +1,8 @@
 It::Application.routes.draw do
 
+  get 'pages/info'
+
+  resources :comments
   get 'posts/search', to: 'posts#search'
 
   devise_for :users
