@@ -5,6 +5,7 @@ It::Application.routes.draw do
   namespace :admin do
       root 'posts#index'
       resources :posts
+      resources :users
   end
 
 
@@ -14,6 +15,7 @@ It::Application.routes.draw do
   devise_for :users
   resources :posts
   resources :ideas
+
 
 
 
