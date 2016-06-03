@@ -2,6 +2,12 @@ It::Application.routes.draw do
 
   get 'pages/info'
 
+  namespace :admin do
+      root 'posts#index'
+      resources :posts
+  end
+
+
   resources :comments
   get 'posts/search', to: 'posts#search'
 
