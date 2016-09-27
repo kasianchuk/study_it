@@ -1,0 +1,72 @@
+class UsersController < ApplicationController
+  before_action :authenticate_user!
+
+  def index
+    @users = User.all
+  end
+
+  def show
+    @user = User.find(params[:id])
+    #@user.photos.build
+    if @user.photos.present?
+      @photos = @user.photos.map {|p| p.filename_url(:carousel)}
+      @photos_full = @user.photos.map {|p| p.filename_url}
+    else
+      @photos = @photos_full =["/photo_not_available.png"]
+    end
+    @home_facilities = @user.home.compforts.build
+  end
+
+  def update
+    load_user
+    build_user
+    save_user
+    facilities
+  end
+
+  def facilities
+    @user = User.find(params[:id])
+    if params[:facility][:id]
+      params[:facility][:id] = params[:facility][:id].reject(&:empty?).map(&:to_i)
+      old_facilities = @user.home.compforts.pluck(:facility_id)
+      new_facilities = params[:facility][:id] - old_facilities
+      old_facilities = old_facilities - params[:facility][:id]
+      new_facilities.each do |nf|
+        @user.home.compforts.build(facility_id: fa)
+      end
+      Compfort.delete_all(facility_id: old_facilities)
+    end
+  end
+
+  private
+
+  def load_user
+    @user = current_user
+  end
+
+  def build_user
+    @user ||= User.new
+
+    params[:facility][:id].each do |fa|
+      if !fa.empty?
+        @user.home.compforts.build(facility_id: fa)
+      end
+    end
+
+    @user.attributes = user_params
+  end
+
+  def save_user
+    binding.pry
+    @user.save ? flash[:notice] = 'Successfully'   : flash[:error] = 'Error update user'
+    redirect_to action: :show
+  end
+
+  def user_params
+    user_params = params[:user]
+    user_params ? user_params.permit(:first_name, :last_name, :avatar, :about, :bible_verse, :birthday, :gender, :status, :born_in, :live_in, :occupation, :education, :language, :tag_list,
+                                     home_attributes: [:about, :type_of_home, :live_with, :district, :close_to, :room, :max_people, :days, :photo], photos: []) : {}
+
+  end
+
+end
